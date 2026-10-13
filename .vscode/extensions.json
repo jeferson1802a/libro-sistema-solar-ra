@@ -1,0 +1,10 @@
+{
+  "recommendations": [
+    "Pleiades.java-extension-pack-jdk",
+    "vmware.vscode-boot-dev-pack",
+    "ms-vscode-remote.remote-containers",
+    "SonarSource.sonarlint-vscode",
+    "MS-vsliveshare.vsliveshare",
+    "PKief.material-icon-theme"
+  ]
+}
