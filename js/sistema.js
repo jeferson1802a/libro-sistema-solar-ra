@@ -7,10 +7,34 @@ AFRAME.registerComponent("sistema-solar", {
       return e;
     };
 
-    crear("a-sphere", {
+    // Detectar si estamos sobre el marcador Hiro (RA) o en la vista 3D libre
+    const esRA = Boolean(document.querySelector("#marcador"));
+
+    // El Sol (núcleo brillante + corona solar translúcida)
+    const sol = crear("a-sphere", {
+      id: "sol-esfera",
       radius: 0.36,
       color: "#ffcb47",
       material: "shader: flat"
+    }, this.el);
+
+    crear("a-sphere", {
+      radius: 0.43,
+      color: "#ffa726",
+      material: "shader: flat; transparent: true; opacity: 0.28"
+    }, sol);
+
+    // En RA el marcador Hiro mira hacia +Y y arriba del marcador es -Z,
+    // por lo que rotamos -90° en X para que el texto se lea al derecho frente a la cámara.
+    crear("a-text", {
+      value: "Sol",
+      align: "center",
+      position: esRA ? "0 0.40 -0.52" : "0 0.56 0",
+      rotation: esRA ? "-90 0 0" : "0 0 0",
+      scale: "0.75 0.75 0.75",
+      color: "#ffe082",
+      side: "double",
+      class: "etiqueta-3d"
     }, this.el);
 
     // Nombre, radio visual, distancia visual, color, grados/s, paginas.
@@ -26,17 +50,43 @@ AFRAME.registerComponent("sistema-solar", {
     ];
 
     planetas.forEach(([nombre, radio, d, color, v, paginas], i) => {
+      const colorOrbita = nombre === "Tierra" ? "#4fc3f7" : "#8398b0";
+      const anguloInicial = i * 45;
+
       const giro = crear("a-entity", {
-        orbita: `radio: ${d}; velocidad: ${v}`,
-        rotation: `0 ${i * 45} 0`,
-        "data-paginas": paginas
+        orbita: `radio: ${d}; velocidad: ${v}; color: ${colorOrbita}`,
+        rotation: `0 ${anguloInicial} 0`,
+        "data-paginas": paginas,
+        "data-planeta": nombre
       }, this.el);
 
+      // Contenedor en la posición orbital
+      const nodoPosicion = crear("a-entity", {
+        position: `${d} 0 0`
+      }, giro);
+
+      // Contenedor que compensa el giro orbital para que el texto siempre esté al derecho
+      const orientadorEtiqueta = crear("a-entity", {
+        class: "orientador-etiqueta",
+        rotation: `0 ${-anguloInicial} 0`
+      }, nodoPosicion);
+
+      crear("a-text", {
+        value: nombre,
+        align: "center",
+        position: esRA ? `0 ${radio + 0.08} ${-(radio + 0.20)}` : `0 ${radio + 0.24} 0`,
+        rotation: esRA ? "-90 0 0" : "0 0 0",
+        scale: "0.62 0.62 0.62",
+        color: "#ffffff",
+        side: "double",
+        class: "etiqueta-3d"
+      }, orientadorEtiqueta);
+
+      // Cuerpo del planeta con animación de rotación sobre su propio eje
       const cuerpo = crear("a-entity", {
-        position: `${d} 0 0`,
         animation: "property: rotation; to: 0 360 0; " +
           "dur: 6000; loop: true; easing: linear"
-      }, giro);
+      }, nodoPosicion);
 
       crear("a-sphere", {
         radius: radio,
@@ -45,10 +95,33 @@ AFRAME.registerComponent("sistema-solar", {
       }, cuerpo);
 
       if (nombre === "Tierra") {
+        // Punto verde continental en latitud media para ver la rotación tanto de frente como desde arriba
+        crear("a-sphere", {
+          radius: 0.035,
+          position: `0 ${radio * 0.65} ${radio * 0.72}`,
+          color: "#50b877",
+          material: "shader: flat"
+        }, cuerpo);
+
+        // La Luna orbitando alrededor de la Tierra
+        const orbitaLuna = crear("a-entity", {
+          animation: "property: rotation; to: 0 360 0; dur: 3200; loop: true; easing: linear"
+        }, nodoPosicion);
+
         crear("a-sphere", {
           radius: 0.03,
-          position: `0 0 ${radio}`,
-          color: "#50b877",
+          position: `${radio + 0.11} 0 0`,
+          color: "#e2e8f0",
+          material: "shader: flat"
+        }, orbitaLuna);
+      }
+
+      if (nombre === "Jupiter") {
+        crear("a-torus", {
+          radius: radio * 0.98,
+          "radius-tubular": 0.012,
+          rotation: "90 0 0",
+          color: "#a66c46",
           material: "shader: flat"
         }, cuerpo);
       }
@@ -60,6 +133,16 @@ AFRAME.registerComponent("sistema-solar", {
           rotation: "-65 0 0",
           color: "#f0d99b",
           material: "shader: flat"
+        }, cuerpo);
+      }
+
+      if (nombre === "Urano") {
+        crear("a-torus", {
+          radius: 0.24,
+          "radius-tubular": 0.008,
+          rotation: "15 0 0",
+          color: "#b2ebf2",
+          material: "shader: flat; transparent: true; opacity: 0.6"
         }, cuerpo);
       }
     });

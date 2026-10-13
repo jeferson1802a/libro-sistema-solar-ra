@@ -4,7 +4,7 @@
   "private": true,
   "description": "Libro educativo del sistema solar con A-Frame, Three.js y AR.js",
   "scripts": {
-    "start": "http-server public -p 8000 -a 0.0.0.0"
+    "start": "http-server public -p 8000 -a 0.0.0.0 -c-1"
   },
   "devDependencies": {
     "http-server": "^14.1.1"

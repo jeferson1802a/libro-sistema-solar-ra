@@ -3,16 +3,81 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Sistema solar en 3D</title>
+  <title>Sistema solar en 3D - Modo interactivo sin cámara</title>
+
+  <link rel="stylesheet" href="css/estilos.css">
 
   <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
   <script src="js/orbita.js"></script>
   <script src="js/sistema.js"></script>
+  <script src="js/libro.js" defer></script>
 </head>
 <body>
-  <a-scene background="color: #071827" vr-mode-ui="enabled: false">
-    <a-entity sistema-solar rotation="25 0 0"></a-entity>
-    <a-entity camera position="0 5 8" rotation="-30 0 0"></a-entity>
+  <section id="panel" aria-label="Controles del libro en modo 3D">
+    <header class="cabecera-libro">
+      <h1 class="titulo-libro">🌌 Modo 3D: Sistema Solar</h1>
+      <div>
+        <span id="indicador-pagina" class="badge-pagina">Página 1 de 5</span>
+        <button id="btn-minimizar" type="button" aria-expanded="true">➖ Minimizar</button>
+      </div>
+    </header>
+
+    <div class="cuerpo-libro">
+      <label for="pagina" style="font-size: 0.8rem; color: #cbd5e1;">Selecciona la página del libro:</label>
+
+      <div class="barra-navegacion">
+        <button id="btn-prev" type="button" title="Página anterior">◀</button>
+        <select id="pagina">
+          <option value="1">1. El Sol</option>
+          <option value="2">2. Planetas rocosos</option>
+          <option value="3">3. Planetas gigantes</option>
+          <option value="4">4. Rotación y traslación</option>
+          <option value="5">5. El sistema completo</option>
+        </select>
+        <button id="btn-next" type="button" title="Página siguiente">▶</button>
+      </div>
+
+      <article class="ficha-capitulo">
+        <h2 id="subtitulo-pagina"></h2>
+        <p id="contenido"></p>
+        <ul id="lista-datos"></ul>
+        <p id="pregunta-guia"></p>
+      </article>
+
+      <div class="controles-acciones">
+        <button id="pausa" type="button">⏸ Pausar</button>
+        <button id="btn-voz" type="button">🔊 Narrar</button>
+        <button id="btn-etiquetas" type="button">🏷️ Nombres: Sí</button>
+        <select id="velocidad" aria-label="Velocidad de traslación" title="Velocidad de traslación">
+          <option value="0.5">🐢 0.5x</option>
+          <option value="1" selected>⚡ 1x</option>
+          <option value="2">🚀 2x</option>
+        </select>
+        <a href="index.html" class="btn-enlace">📷 Volver a Cámara RA</a>
+        <a href="aframe.html" class="btn-enlace">🌍 Escena Etapa 2</a>
+      </div>
+
+      <p id="estado" class="estado-ok" role="status">
+        🖱️ Modo 3D activo: arrastra con el mouse para girar la vista o usa WASD.
+      </p>
+
+      <footer class="pie-libro">
+        <small>Representación didáctica sin escala astronómica real.</small>
+        <details id="fuentes">
+          <summary>📚 Fuentes y recursos utilizados</summary>
+          <ul>
+            <li>NASA Science (2024). <em>Solar System Exploration</em>. https://science.nasa.gov/solar-system/</li>
+            <li>Unión Astronómica Internacional - UAI (2006). <em>Resolución B5: Definición de planeta en el Sistema Solar</em>.</li>
+            <li>Motores gráficos: A-Frame 1.6.0 y Three.js (<code>AFRAME.THREE</code>).</li>
+          </ul>
+        </details>
+      </footer>
+    </div>
+  </section>
+
+  <a-scene background="color: #05101e" vr-mode-ui="enabled: false">
+    <a-entity id="sistema" sistema-solar rotation="22 0 0"></a-entity>
+    <a-entity camera look-controls wasd-controls position="0 2.6 5.2" rotation="-22 0 0"></a-entity>
   </a-scene>
 </body>
 </html>
